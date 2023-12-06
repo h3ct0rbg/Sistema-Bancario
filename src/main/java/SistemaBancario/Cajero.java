@@ -6,57 +6,58 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.io.PrintWriter;
+import javax.swing.JTextField;
 
 public class Cajero implements Runnable {
 
     private int id;
+    private JTextField total;
+    private JTextField operando;
     private int dinero;
-    private PrintWriter pw;
-    private Cola cola;
     private Persona persona;
-    private boolean ocupado = false;
-    private Lock cerrojo = new ReentrantLock();
-    private Condition insertar = cerrojo.newCondition();
-    private Condition retirar = cerrojo.newCondition();
     
-    public Cajero(int id, PrintWriter pw, Cola cola) {
+    public Cajero(int id, JTextField total, JTextField operando) {
         this.id = id;
-        this.pw = pw;
-        this.cola = cola;
+        this.total = total;
+        this.operando = operando;
         dinero = 50000;
     }
     
-    public void insertar(int cantidad){
-        cerrojo.lock();
-        ocupado = true;
-        cola.sacar();
+    public synchronized void insertar(int cantidad) throws InterruptedException{
+        operando.setText(persona.getId()+"-I+"+persona.getDinero());
+        Thread.sleep(2000);
         int nuevoDinero = dinero + cantidad;
         if (nuevoDinero>=100000) {
-            try {
-                insertar.await();
-            } catch (InterruptedException e) {}
+            nuevoDinero-=50000;
         }
         dinero = nuevoDinero;
-        ocupado = false;
-        cerrojo.unlock();
+        total.setText(String.valueOf(dinero));
     }
     
-    public void extraer(int cantidad){
-        cerrojo.lock();
-        dinero-=cantidad;
-        cerrojo.unlock();
+    public synchronized void extraer(int cantidad) throws InterruptedException{
+        operando.setText(persona.getId()+"-E-"+persona.getDinero());
+        Thread.sleep(1000);
+        int nuevoDinero = dinero - cantidad;
+        if (nuevoDinero<=0) {
+            nuevoDinero+=50000;
+        }
+        dinero = nuevoDinero;
+        total.setText(String.valueOf(dinero));
     }
     
-    public boolean estaOcupado(){
-        return ocupado;
-    }
-
     @Override
     public void run() {
         try{
-            do{
-                persona = cola.sacar();
-            } while(persona!=null);
+            Thread.sleep(8000);
+            while(!Cola.estaVacia()){
+                persona = Cola.sacar();
+                if(persona.getOperacion()){
+                    insertar(persona.getDinero());
+                }else{
+                    extraer(persona.getDinero());
+                }
+                System.out.println(persona.getId());
+            }
         } catch(Exception e) {}
     }
 }

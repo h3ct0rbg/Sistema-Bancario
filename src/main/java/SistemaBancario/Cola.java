@@ -7,20 +7,24 @@ import java.util.LinkedList;
 
 public class Cola {
 
-    private LinkedList<Persona> cola;
-    private JTextField tf;
+    private static LinkedList<Persona> cola;
+    private static JTextField tf;
 
-    public Cola(JTextField tf) {
-        cola = new LinkedList<>();
-        this.tf = tf;
+    private Cola() {
+        // Constructor privado para evitar instancias, ya que la clase es estática
     }
 
-    public synchronized void meter(Persona persona) {
+    public static void inicializar(JTextField textField) {
+        cola = new LinkedList<>();
+        tf = textField;
+    }
+
+    public static synchronized void meter(Persona persona) {
         cola.offer(persona);
         imprimir();
     }
 
-    public synchronized Persona sacar() {
+    public static synchronized Persona sacar() {
         if (!cola.isEmpty()) {
             Persona persona = cola.poll();
             imprimir();
@@ -29,7 +33,7 @@ public class Cola {
         return null; // Devolver null si la cola está vacía
     }
 
-    public void imprimir() {
+    private static void imprimir() {
         StringBuilder contenido = new StringBuilder();
 
         for (Persona persona : cola) {
@@ -37,5 +41,9 @@ public class Cola {
         }
 
         tf.setText(contenido.toString());
+    }
+
+    public static boolean estaVacia() {
+        return cola.isEmpty();
     }
 }

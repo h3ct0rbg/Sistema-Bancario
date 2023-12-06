@@ -14,7 +14,6 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     private BancoCentral bancoCentral;
     private Thread[] cajeros;
     private Thread[] operarios;
-    private Cola cola;
     
     Thread cajero;
     Thread operario;
@@ -32,24 +31,30 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
             this.bancoCentral = new BancoCentral(pw);
             this.cajeros = new Thread[4]; //Array de cajeros
             this.operarios = new Thread[2]; //Array de operarios
-            this.cola = new Cola(JTextCola);
+            Cola.inicializar(JTextCola);
 
-            for (int i = 1; i < cajeros.length; i++) {
-                this.cajero = new Thread(new Cajero(i, pw, cola));
-                this.cajeros[i] = cajero;
-                this.cajeros[i].start();
-            }
+            this.cajeros[0] = new Thread(new Cajero(1, total1, operando1));
+            this.cajeros[1] = new Thread(new Cajero(2, total2, operando2));
+            this.cajeros[2] = new Thread(new Cajero(3, total3, operando3));
+            this.cajeros[3] = new Thread(new Cajero(4, total4, operando4));
             
-            for (int i = 1; i < operarios.length; i++) {
-                this.operario = new Thread(new Operario("Operario"+i, pw, cajeros));
-                this.operarios[i] = operario;
-                this.operarios[i].start();
-            }
+            this.operarios[0] = new Thread(new Operario("Operario1", pw, cajeros));
+            this.operarios[1] = new Thread(new Operario("Operario2", pw, cajeros));
+            
 
             for (int i = 1; i <= 200; i++) {
-                this.persona = new Thread(new Persona("Persona"+i, pw, cajeros, cola));
+                this.persona = new Thread(new Persona("Persona"+i));
                 this.persona.start();
-            }         
+            }
+            
+            this.cajeros[0].start();
+            this.cajeros[1].start();
+            this.cajeros[2].start();
+            this.cajeros[3].start();
+            
+            this.operarios[0].start();
+            this.operarios[1].start();
+            
         } catch(IOException e) {}    
     }
 

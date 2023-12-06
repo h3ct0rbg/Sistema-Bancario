@@ -2,22 +2,16 @@ package SistemaBancario;
 
 //@author Héctor Benavente García
 
-import java.io.PrintWriter;
 import java.util.Random;
 
 public class Persona implements Runnable {
 
     private String id;
-    private PrintWriter pw;
-    private Thread[] cajeros;
-    private Cola cola;
+    private boolean operacion;
     private int dinero;
     
-    public Persona(String id, PrintWriter pw, Thread[] cajeros, Cola cola) {
+    public Persona(String id) {
         this.id = id;
-        this.pw = pw;
-        this.cajeros = cajeros;
-        this.cola = cola;
     }
     
     public String getId(){
@@ -28,22 +22,20 @@ public class Persona implements Runnable {
         return dinero;
     }
     
+    public boolean getOperacion(){
+        return operacion;
+    }
+    
     @Override
     public void run() {
         try {
             Random rand = new Random();
-            Thread.sleep(rand.nextInt(26000) + 5000); //Tiempo de llegada escalonada
+            Thread.sleep(rand.nextInt(36000) + 5000); //Tiempo de llegada escalonada
+            operacion = rand.nextBoolean();
             dinero = (rand.nextInt(6) + 5) * 1000;
-            
-            if(rand.nextBoolean()){
-                cola.meter(this);
-                cola.imprimir();
-                System.out.println(id+": Insertar +"+dinero);
-            }else{
-                cola.meter(this);
-                cola.imprimir();
-                System.out.println(id+": Extraer -"+dinero);
-            }
+           
+            Cola.meter(this);
+
         } catch (InterruptedException ex) {}
     }
 }
