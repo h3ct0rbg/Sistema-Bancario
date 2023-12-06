@@ -14,46 +14,43 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     private BancoCentral bancoCentral;
     private Thread[] cajeros;
     private Thread[] operarios;
-    
-    Thread cajero;
-    Thread operario;
-    Thread persona;
-    
+        
     public ModuloVisualizacion() {
         initComponents();
         setLocationRelativeTo(null);
         
         try{
             //Log del sistema bancario
-            this.fileWriter = new FileWriter("evolucionCajeros.txt", true);
-            this.pw = new PrintWriter(fileWriter);
+            fileWriter = new FileWriter("evolucionCajeros.txt", true);
+            pw = new PrintWriter(fileWriter);
             
-            this.bancoCentral = new BancoCentral(pw);
-            this.cajeros = new Thread[4]; //Array de cajeros
-            this.operarios = new Thread[2]; //Array de operarios
-            Cola.inicializar(JTextCola);
-
-            this.cajeros[0] = new Thread(new Cajero(1, total1, operando1));
-            this.cajeros[1] = new Thread(new Cajero(2, total2, operando2));
-            this.cajeros[2] = new Thread(new Cajero(3, total3, operando3));
-            this.cajeros[3] = new Thread(new Cajero(4, total4, operando4));
+            bancoCentral = new BancoCentral(pw);
+            cajeros = new Thread[4]; //Array de cajeros
+            operarios = new Thread[2]; //Array de operarios
+            Cola.inicializar(10, JTextCola);
             
-            this.operarios[0] = new Thread(new Operario("Operario1", pw, cajeros));
-            this.operarios[1] = new Thread(new Operario("Operario2", pw, cajeros));
+            operarios[0] = new Thread(new Operario("Operario1", cajeros));
+            operarios[1] = new Thread(new Operario("Operario2", cajeros));
             
 
             for (int i = 1; i <= 200; i++) {
-                this.persona = new Thread(new Persona("Persona"+i));
-                this.persona.start();
+                Thread persona = new Thread(new Persona("Persona"+i));
+                persona.start();
             }
             
-            this.cajeros[0].start();
-            this.cajeros[1].start();
-            this.cajeros[2].start();
-            this.cajeros[3].start();
+            //Cajeros
+            cajeros[0] = new Thread(new Cajero(1, total1, operando1));
+            cajeros[1] = new Thread(new Cajero(2, total2, operando2));
+            cajeros[2] = new Thread(new Cajero(3, total3, operando3));
+            cajeros[3] = new Thread(new Cajero(4, total4, operando4));
             
-            this.operarios[0].start();
-            this.operarios[1].start();
+            cajeros[0].start();
+            cajeros[1].start();
+            cajeros[2].start();
+            cajeros[3].start();
+            
+            operarios[0].start();
+            operarios[1].start();
             
         } catch(IOException e) {}    
     }
@@ -122,6 +119,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         setResizable(false);
         setSize(new java.awt.Dimension(1280, 720));
 
+        total1.setEditable(false);
         total1.setBackground(new java.awt.Color(255, 255, 255));
         total1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         total1.setForeground(new java.awt.Color(0, 0, 0));
@@ -135,10 +133,12 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         jLabeloperando1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabeloperando1.setText("Operando:");
 
+        operando1.setEditable(false);
         operando1.setBackground(new java.awt.Color(255, 255, 255));
         operando1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         operando1.setForeground(new java.awt.Color(0, 0, 0));
 
+        total2.setEditable(false);
         total2.setBackground(new java.awt.Color(255, 255, 255));
         total2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         total2.setForeground(new java.awt.Color(0, 0, 0));
@@ -152,14 +152,17 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         jLabeloperando2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabeloperando2.setText("Operando:");
 
+        operando2.setEditable(false);
         operando2.setBackground(new java.awt.Color(255, 255, 255));
         operando2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         operando2.setForeground(new java.awt.Color(0, 0, 0));
 
+        operando3.setEditable(false);
         operando3.setBackground(new java.awt.Color(255, 255, 255));
         operando3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         operando3.setForeground(new java.awt.Color(0, 0, 0));
 
+        total3.setEditable(false);
         total3.setBackground(new java.awt.Color(255, 255, 255));
         total3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         total3.setForeground(new java.awt.Color(0, 0, 0));
@@ -173,10 +176,12 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         jLabeloperando3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabeloperando3.setText("Operando:");
 
+        operando4.setEditable(false);
         operando4.setBackground(new java.awt.Color(255, 255, 255));
         operando4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         operando4.setForeground(new java.awt.Color(0, 0, 0));
 
+        total4.setEditable(false);
         total4.setBackground(new java.awt.Color(255, 255, 255));
         total4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         total4.setForeground(new java.awt.Color(0, 0, 0));
@@ -201,6 +206,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JLabeltotal6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal6.setText("Total:");
 
+        total5.setEditable(false);
         total5.setBackground(new java.awt.Color(255, 255, 255));
         total5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         total5.setForeground(new java.awt.Color(0, 0, 0));
@@ -208,6 +214,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         cajero9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cajero9.setText("Operario 1");
 
+        total6.setEditable(false);
         total6.setBackground(new java.awt.Color(255, 255, 255));
         total6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         total6.setForeground(new java.awt.Color(0, 0, 0));
@@ -215,6 +222,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         cajero10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cajero10.setText("Operario 2");
 
+        total7.setEditable(false);
         total7.setBackground(new java.awt.Color(255, 255, 255));
         total7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         total7.setForeground(new java.awt.Color(0, 0, 0));
@@ -246,6 +254,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JLabeltotal7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal7.setText("Movimientos realizados:");
 
+        jTextArea5.setEditable(false);
         jTextArea5.setBackground(new java.awt.Color(255, 255, 255));
         jTextArea5.setColumns(20);
         jTextArea5.setForeground(new java.awt.Color(0, 0, 0));
@@ -255,6 +264,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JLabeltotal8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal8.setText("Movimientos realizados:");
 
+        jTextArea1.setEditable(false);
         jTextArea1.setBackground(new java.awt.Color(255, 255, 255));
         jTextArea1.setColumns(20);
         jTextArea1.setForeground(new java.awt.Color(0, 0, 0));
@@ -264,6 +274,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JLabeltotal9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal9.setText("Movimientos realizados:");
 
+        jTextArea2.setEditable(false);
         jTextArea2.setBackground(new java.awt.Color(255, 255, 255));
         jTextArea2.setColumns(20);
         jTextArea2.setForeground(new java.awt.Color(0, 0, 0));
@@ -273,6 +284,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JLabeltotal10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal10.setText("Movimientos realizados:");
 
+        jTextArea3.setEditable(false);
         jTextArea3.setBackground(new java.awt.Color(255, 255, 255));
         jTextArea3.setColumns(20);
         jTextArea3.setForeground(new java.awt.Color(0, 0, 0));
@@ -282,6 +294,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JLabeltotal11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal11.setText("Movimientos realizados:");
 
+        jTextArea4.setEditable(false);
         jTextArea4.setBackground(new java.awt.Color(255, 255, 255));
         jTextArea4.setColumns(20);
         jTextArea4.setForeground(new java.awt.Color(0, 0, 0));
@@ -291,6 +304,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         cajero11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cajero11.setText("Esperando para un cajero:");
 
+        JTextCola.setEditable(false);
         JTextCola.setBackground(new java.awt.Color(255, 255, 255));
         JTextCola.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JTextCola.setForeground(new java.awt.Color(0, 0, 0));
@@ -410,8 +424,8 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addComponent(cajero11)
                 .addGap(18, 18, 18)
-                .addComponent(JTextCola, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(JTextCola, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cajero8)
                     .addComponent(cajero1)

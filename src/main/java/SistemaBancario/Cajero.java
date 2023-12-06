@@ -2,10 +2,7 @@ package SistemaBancario;
 
 //@author Héctor Benavente García
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.io.PrintWriter;
+import java.util.Random;
 import javax.swing.JTextField;
 
 public class Cajero implements Runnable {
@@ -25,7 +22,8 @@ public class Cajero implements Runnable {
     
     public synchronized void insertar(int cantidad) throws InterruptedException{
         operando.setText(persona.getId()+"-I+"+persona.getDinero());
-        Thread.sleep(2000);
+        Random rand = new Random();
+        Thread.sleep(rand.nextInt(2000)+2000);
         int nuevoDinero = dinero + cantidad;
         if (nuevoDinero>=100000) {
             nuevoDinero-=50000;
@@ -36,7 +34,8 @@ public class Cajero implements Runnable {
     
     public synchronized void extraer(int cantidad) throws InterruptedException{
         operando.setText(persona.getId()+"-E-"+persona.getDinero());
-        Thread.sleep(1000);
+        Random rand = new Random();
+        Thread.sleep(rand.nextInt(2000)+2500);
         int nuevoDinero = dinero - cantidad;
         if (nuevoDinero<=0) {
             nuevoDinero+=50000;
@@ -48,7 +47,7 @@ public class Cajero implements Runnable {
     @Override
     public void run() {
         try{
-            Thread.sleep(8000);
+            Thread.sleep(5000);
             while(!Cola.estaVacia()){
                 persona = Cola.sacar();
                 if(persona.getOperacion()){
@@ -58,6 +57,6 @@ public class Cajero implements Runnable {
                 }
                 System.out.println(persona.getId());
             }
-        } catch(Exception e) {}
+        } catch(InterruptedException e) {}
     }
 }

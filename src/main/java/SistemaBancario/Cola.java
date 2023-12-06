@@ -3,47 +3,78 @@ package SistemaBancario;
 //@author Héctor Benavente García
 
 import javax.swing.JTextField;
-import java.util.LinkedList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Cola {
 
-    private static LinkedList<Persona> cola;
+    private static Persona[] cola; // Utilizamos un array para simular la cola
+    private static int tamano;  // Tamaño máximo de la cola
+    private static int ocupados; // Número de elementos ocupados en la cola
+    private static Lock cerrojo = new ReentrantLock();
+    private static Condition meter = cerrojo.newCondition();
+    private static Condition sacar = cerrojo.newCondition();
     private static JTextField tf;
 
-    private Cola() {
-        // Constructor privado para evitar instancias, ya que la clase es estática
-    }
-
-    public static void inicializar(JTextField textField) {
-        cola = new LinkedList<>();
+    public static void inicializar(int size, JTextField textField) {
+        tamano = size;
+        cola = new Persona[tamano];
         tf = textField;
     }
 
-    public static synchronized void meter(Persona persona) {
-        cola.offer(persona);
-        imprimir();
+    public static void meter(Persona p) {
+        try {
+            cerrojo.lock();
+            while (ocupados == tamano) {
+                try {
+                    meter.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            cola[ocupados] = p;
+            ocupados++;
+            sacar.signal();
+            imprimir();
+        } finally {
+            cerrojo.unlock();
+        }
     }
 
-    public static synchronized Persona sacar() {
-        if (!cola.isEmpty()) {
-            Persona persona = cola.poll();
+    public static Persona sacar() {
+        try {
+            cerrojo.lock();
+            while (ocupados == 0) {
+                try {
+                    sacar.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            Persona datoRecibido = cola[0];
+            // Mover los elementos restantes hacia la izquierda
+            System.arraycopy(cola, 1, cola, 0, ocupados - 1);
+            ocupados--;
+            meter.signal();
             imprimir();
-            return persona;
+            return datoRecibido;
+        } finally {
+            cerrojo.unlock();
         }
-        return null; // Devolver null si la cola está vacía
     }
 
     private static void imprimir() {
         StringBuilder contenido = new StringBuilder();
 
-        for (Persona persona : cola) {
-            contenido.append(persona.getId()).append(" - ");
+        for (int i = 0; i < ocupados; i++) {
+            contenido.append("  [ ").append(cola[i].getId()).append(" ]     ");
         }
 
         tf.setText(contenido.toString());
     }
 
     public static boolean estaVacia() {
-        return cola.isEmpty();
+        return ocupados == 0;
     }
 }

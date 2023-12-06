@@ -2,19 +2,29 @@ package SistemaBancario;
 
 //@author Héctor Benavente García
 
-import java.io.PrintWriter;
-
 public class Operario implements Runnable{
     
     private String id;
+    private boolean ocupado;
     
-    public Operario(String id, PrintWriter pw, Thread[] cajeros) {
+    public Operario(String id, Thread[] cajeros) {
         this.id = id;
+        ocupado = false;
+    }
+    
+    public void enviar(int cantidad){
+        
+    }
+    
+    public int traer(){
+        return 0; 
     }
     
     @Override
     public void run() {
-        System.out.println(id+": Listo");
+        while(true){
+            System.out.println(id+": Listo");
+        }
     }
     
 }
