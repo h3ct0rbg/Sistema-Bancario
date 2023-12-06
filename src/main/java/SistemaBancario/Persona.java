@@ -30,7 +30,7 @@ public class Persona implements Runnable {
     public void run() {
         try {
             Random rand = new Random();
-            Thread.sleep(rand.nextInt(11000) + 5000); //Tiempo de llegada escalonada
+            Thread.sleep(rand.nextInt(5000) + 1000); //Tiempo de llegada escalonada
             operacion = rand.nextBoolean();
             dinero = (rand.nextInt(6) + 5) * 1000;
            

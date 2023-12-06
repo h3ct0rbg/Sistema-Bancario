@@ -39,10 +39,10 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
             }
             
             //Cajeros
-            cajeros[0] = new Thread(new Cajero(1, total1, operando1));
-            cajeros[1] = new Thread(new Cajero(2, total2, operando2));
-            cajeros[2] = new Thread(new Cajero(3, total3, operando3));
-            cajeros[3] = new Thread(new Cajero(4, total4, operando4));
+            cajeros[0] = new Thread(new Cajero(1, operarios, total1, operando1, movimientos1));
+            cajeros[1] = new Thread(new Cajero(2, operarios, total2, operando2, movimientos2));
+            cajeros[2] = new Thread(new Cajero(3, operarios, total3, operando3, movimientos3));
+            cajeros[3] = new Thread(new Cajero(4, operarios, total4, operando4, movimientos4));
             
             cajeros[0].start();
             cajeros[1].start();
@@ -101,16 +101,16 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         jTextArea5 = new javax.swing.JTextArea();
         JLabeltotal8 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        movimientos1 = new javax.swing.JTextArea();
         JLabeltotal9 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        movimientos2 = new javax.swing.JTextArea();
         JLabeltotal10 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea3 = new javax.swing.JTextArea();
+        movimientos3 = new javax.swing.JTextArea();
         JLabeltotal11 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jTextArea4 = new javax.swing.JTextArea();
+        movimientos4 = new javax.swing.JTextArea();
         cajero11 = new javax.swing.JLabel();
         JTextCola = new javax.swing.JTextField();
 
@@ -264,42 +264,50 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JLabeltotal8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal8.setText("Movimientos realizados:");
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setBackground(new java.awt.Color(255, 255, 255));
-        jTextArea1.setColumns(20);
-        jTextArea1.setForeground(new java.awt.Color(0, 0, 0));
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        jScrollPane2.setHorizontalScrollBar(null);
+
+        movimientos1.setEditable(false);
+        movimientos1.setBackground(new java.awt.Color(255, 255, 255));
+        movimientos1.setColumns(20);
+        movimientos1.setForeground(new java.awt.Color(0, 0, 0));
+        movimientos1.setRows(5);
+        jScrollPane2.setViewportView(movimientos1);
 
         JLabeltotal9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal9.setText("Movimientos realizados:");
 
-        jTextArea2.setEditable(false);
-        jTextArea2.setBackground(new java.awt.Color(255, 255, 255));
-        jTextArea2.setColumns(20);
-        jTextArea2.setForeground(new java.awt.Color(0, 0, 0));
-        jTextArea2.setRows(5);
-        jScrollPane3.setViewportView(jTextArea2);
+        jScrollPane3.setHorizontalScrollBar(null);
+
+        movimientos2.setEditable(false);
+        movimientos2.setBackground(new java.awt.Color(255, 255, 255));
+        movimientos2.setColumns(20);
+        movimientos2.setForeground(new java.awt.Color(0, 0, 0));
+        movimientos2.setRows(5);
+        jScrollPane3.setViewportView(movimientos2);
 
         JLabeltotal10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal10.setText("Movimientos realizados:");
 
-        jTextArea3.setEditable(false);
-        jTextArea3.setBackground(new java.awt.Color(255, 255, 255));
-        jTextArea3.setColumns(20);
-        jTextArea3.setForeground(new java.awt.Color(0, 0, 0));
-        jTextArea3.setRows(5);
-        jScrollPane4.setViewportView(jTextArea3);
+        jScrollPane4.setHorizontalScrollBar(null);
+
+        movimientos3.setEditable(false);
+        movimientos3.setBackground(new java.awt.Color(255, 255, 255));
+        movimientos3.setColumns(20);
+        movimientos3.setForeground(new java.awt.Color(0, 0, 0));
+        movimientos3.setRows(5);
+        jScrollPane4.setViewportView(movimientos3);
 
         JLabeltotal11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal11.setText("Movimientos realizados:");
 
-        jTextArea4.setEditable(false);
-        jTextArea4.setBackground(new java.awt.Color(255, 255, 255));
-        jTextArea4.setColumns(20);
-        jTextArea4.setForeground(new java.awt.Color(0, 0, 0));
-        jTextArea4.setRows(5);
-        jScrollPane5.setViewportView(jTextArea4);
+        jScrollPane5.setHorizontalScrollBar(null);
+
+        movimientos4.setEditable(false);
+        movimientos4.setBackground(new java.awt.Color(255, 255, 255));
+        movimientos4.setColumns(20);
+        movimientos4.setForeground(new java.awt.Color(0, 0, 0));
+        movimientos4.setRows(5);
+        jScrollPane5.setViewportView(movimientos4);
 
         cajero11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cajero11.setText("Esperando para un cajero:");
@@ -581,11 +589,11 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextArea3;
-    private javax.swing.JTextArea jTextArea4;
     private javax.swing.JTextArea jTextArea5;
+    private javax.swing.JTextArea movimientos1;
+    private javax.swing.JTextArea movimientos2;
+    private javax.swing.JTextArea movimientos3;
+    private javax.swing.JTextArea movimientos4;
     private javax.swing.JTextField operando1;
     private javax.swing.JTextField operando2;
     private javax.swing.JTextField operando3;
