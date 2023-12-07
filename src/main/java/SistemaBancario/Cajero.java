@@ -33,7 +33,7 @@ public class Cajero implements Runnable {
     public synchronized void insertar(int cantidad) throws InterruptedException{
         operando.setText(persona.getId()+"-I+"+persona.getDinero());
         movimientos.append(persona.getId()+"-I+"+persona.getDinero()+"\n");
-        mensajeLog = persona.getId()+"-I+"+persona.getDinero()+"\n";
+        mensajeLog = persona.getId()+"-I+"+persona.getDinero()+ " en el Cajero " + id +"\n";
         try{
             FileWriter fileWriter = new FileWriter(archivo, true); // El parámetro true indica que se añadirá al final del archivo
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -58,7 +58,7 @@ public class Cajero implements Runnable {
     public synchronized void extraer(int cantidad) throws InterruptedException{
         operando.setText(persona.getId()+"-E-"+persona.getDinero());
         movimientos.append(persona.getId()+"-E-"+persona.getDinero()+"\n");
-        mensajeLog = persona.getId()+"-E-"+persona.getDinero()+"\n";
+        mensajeLog = persona.getId()+"-I+"+persona.getDinero()+ " en el Cajero " + id +"\n";
         try{
             FileWriter fileWriter = new FileWriter(archivo, true); // El parámetro true indica que se añadirá al final del archivo
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
