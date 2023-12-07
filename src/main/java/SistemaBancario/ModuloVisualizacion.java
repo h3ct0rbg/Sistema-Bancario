@@ -2,6 +2,8 @@ package SistemaBancario;
 
 //@author Héctor Benavente García
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -113,6 +115,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         movimientos4 = new javax.swing.JTextArea();
         cajero11 = new javax.swing.JLabel();
         JTextCola = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1280, 720));
@@ -317,6 +320,14 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JTextCola.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JTextCola.setForeground(new java.awt.Color(0, 0, 0));
 
+        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton3.setText("Abrir fichero Log");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -397,7 +408,9 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
                             .addGap(57, 57, 57)
                             .addComponent(cajero7)
                             .addGap(212, 212, 212)
-                            .addComponent(cajero9))
+                            .addComponent(cajero9)
+                            .addGap(99, 99, 99)
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(57, 57, 57)
                             .addComponent(JLabeltotal6)
@@ -479,11 +492,13 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(40, 40, 40)
+                .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cajero7)
-                    .addComponent(cajero9))
-                .addGap(18, 18, 18)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cajero9)
+                        .addComponent(jButton3)))
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(2, 2, 2)
@@ -521,6 +536,24 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        String nombreArchivo = "evolucionCajeros.txt";
+
+        try {
+            File archivo = new File(nombreArchivo);
+
+            if (archivo.exists()) {
+                Desktop.getDesktop().open(archivo);
+            } else {
+                System.out.println("El archivo no existe.");
+                // Aquí podrías mostrar un mensaje al usuario indicando que el archivo no se encontró
+            }
+        } catch (IOException ex) {
+            System.out.println("Error al abrir el archivo: " + ex.getMessage());
+            // Manejar la excepción (puedes mostrar un mensaje al usuario)
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -579,6 +612,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     private javax.swing.JLabel cajero9;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabeloperando1;
     private javax.swing.JLabel jLabeloperando2;

@@ -105,3 +105,19 @@ Persona165-I+9000 Cajero 1
 
 Persona190-I+8000 Cajero 4
 
+Persona37-I+10000 en el Cajero 4
+
+Persona49-I+10000 en el Cajero 2
+
+Persona125-I+8000 en el Cajero 1
+
+Persona54-I+10000 en el Cajero 3
+
+Persona158-I+8000 en el Cajero 1
+
+Persona120-I+10000 en el Cajero 4
+
+Persona124-I+5000 en el Cajero 2
+
+Persona66-I+7000 en el Cajero 3
+
