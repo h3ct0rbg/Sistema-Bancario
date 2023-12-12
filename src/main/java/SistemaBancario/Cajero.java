@@ -136,26 +136,35 @@ public class Cajero implements Runnable {
         this.notify();
     }
     
-    @Override
-    public void run() {
-        try{
-            total.setText(String.valueOf(dinero));
-            Thread.sleep(5000);
-            while(!Cola.estaVacia()){
-                while(parado){
-                    try {
-                        condicionParado.await();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Cajero.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+@Override
+public void run() {
+    try {
+        total.setText(String.valueOf(dinero));
+        Thread.sleep(5000);
+        while (!Cola.estaVacia()) {
+            lock.lock(); // Adquirir el bloqueo antes de usar la condición
+            try {
+                if (parado) {
+                    condicionParado.await(); // Esperar si está pausado
                 }
-                persona = Cola.sacar();
-                if(persona.getOperacion()){
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Cajero.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                lock.unlock(); // Liberar el bloqueo
+            }
+            
+            persona = Cola.sacar();
+            if (persona != null) {
+                if (persona.getOperacion()) {
                     insertar(persona.getDinero());
-                }else{
+                } else {
                     extraer(persona.getDinero());
                 }
             }
-        } catch(InterruptedException e) {}
+        }
+    } catch (InterruptedException e) {
+        // Manejo de la interrupción
     }
+}
+
 }
