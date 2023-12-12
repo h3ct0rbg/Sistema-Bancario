@@ -1,12 +1,15 @@
 package SistemaBancario;
 
 //@author Héctor Benavente García
+//@author Jose Sánchez Nicolás
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ModuloVisualizacion extends javax.swing.JFrame {
 
@@ -14,8 +17,8 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     private PrintWriter pw;
     
     private BancoCentral bancoCentral;
-    private Thread[] cajeros;
-    private Thread[] operarios;
+    private Cajero[] cajeros;
+    private Operario[] operarios;
         
     public ModuloVisualizacion() {
         initComponents();
@@ -26,14 +29,14 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
             fileWriter = new FileWriter("evolucionCajeros.txt", true);
             pw = new PrintWriter(fileWriter);
             
-            bancoCentral = new BancoCentral(pw);
-            cajeros = new Thread[4]; //Array de cajeros
-            operarios = new Thread[2]; //Array de operarios
+            BancoCentral.inicializar(total5);
+            cajeros = new Cajero[4]; //Array de cajeros
+            operarios = new Operario[2]; //Array de operarios
             Cola.inicializar(10, JTextCola);
+            Solicitudes.inicializar(4);
             
-            operarios[0] = new Thread(new Operario("Operario1", cajeros));
-            operarios[1] = new Thread(new Operario("Operario2", cajeros));
-            
+            operarios[0] = new Operario("Operario1", operario1, movimientos5);
+            operarios[1] = new Operario("Operario2", operario2, movimientos5);
 
             for (int i = 1; i <= 200; i++) {
                 Thread persona = new Thread(new Persona("Persona"+i));
@@ -41,18 +44,20 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
             }
             
             //Cajeros
-            cajeros[0] = new Thread(new Cajero(1, operarios, total1, operando1, movimientos1));
-            cajeros[1] = new Thread(new Cajero(2, operarios, total2, operando2, movimientos2));
-            cajeros[2] = new Thread(new Cajero(3, operarios, total3, operando3, movimientos3));
-            cajeros[3] = new Thread(new Cajero(4, operarios, total4, operando4, movimientos4));
+            cajeros[0] = new Cajero(1, total1, operando1, movimientos1);
+            cajeros[1] = new Cajero(2, total2, operando2, movimientos2);
+            cajeros[2] = new Cajero(3, total3, operando3, movimientos3);
+            cajeros[3] = new Cajero(4, total4, operando4, movimientos4);
             
-            cajeros[0].start();
-            cajeros[1].start();
-            cajeros[2].start();
-            cajeros[3].start();
+            for (Cajero cajero : cajeros) {
+                Thread hiloCajero = new Thread(cajero);
+                hiloCajero.start();
+            }
             
-            operarios[0].start();
-            operarios[1].start();
+            for (Operario operario : operarios) {
+                Thread hiloOperario = new Thread(operario);
+                hiloOperario.start();
+            }
             
         } catch(IOException e) {}    
     }
@@ -92,15 +97,15 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JLabeltotal6 = new javax.swing.JLabel();
         total5 = new javax.swing.JTextField();
         cajero9 = new javax.swing.JLabel();
-        total6 = new javax.swing.JTextField();
+        operario1 = new javax.swing.JTextField();
         cajero10 = new javax.swing.JLabel();
-        total7 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        operario2 = new javax.swing.JTextField();
+        pausarOp1 = new javax.swing.JButton();
+        pausarOp2 = new javax.swing.JButton();
+        pausar = new javax.swing.JButton();
         JLabeltotal7 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea5 = new javax.swing.JTextArea();
+        movimientos5 = new javax.swing.JTextArea();
         JLabeltotal8 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         movimientos1 = new javax.swing.JTextArea();
@@ -115,7 +120,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         movimientos4 = new javax.swing.JTextArea();
         cajero11 = new javax.swing.JLabel();
         JTextCola = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
+        log = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1280, 720));
@@ -217,52 +222,53 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         cajero9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cajero9.setText("Operario 1");
 
-        total6.setEditable(false);
-        total6.setBackground(new java.awt.Color(255, 255, 255));
-        total6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        total6.setForeground(new java.awt.Color(0, 0, 0));
+        operario1.setEditable(false);
+        operario1.setBackground(new java.awt.Color(255, 255, 255));
+        operario1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        operario1.setForeground(new java.awt.Color(0, 0, 0));
 
         cajero10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cajero10.setText("Operario 2");
 
-        total7.setEditable(false);
-        total7.setBackground(new java.awt.Color(255, 255, 255));
-        total7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        total7.setForeground(new java.awt.Color(0, 0, 0));
+        operario2.setEditable(false);
+        operario2.setBackground(new java.awt.Color(255, 255, 255));
+        operario2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        operario2.setForeground(new java.awt.Color(0, 0, 0));
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setText("Pausar/Reanudar Operario 1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        pausarOp1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        pausarOp1.setText("Pausar Operario");
+        pausarOp1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                pausarOp1ActionPerformed(evt);
             }
         });
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton2.setText("Pausar/Reanudar Operario 2");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        pausarOp2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        pausarOp2.setText("Pausar Operario");
+        pausarOp2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                pausarOp2ActionPerformed(evt);
             }
         });
 
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton4.setText("Pausar/Reanudar Todo");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        pausar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        pausar.setText("Pausar");
+        pausar.setActionCommand("Pausar");
+        pausar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                pausarActionPerformed(evt);
             }
         });
 
         JLabeltotal7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal7.setText("Movimientos realizados:");
 
-        jTextArea5.setEditable(false);
-        jTextArea5.setBackground(new java.awt.Color(255, 255, 255));
-        jTextArea5.setColumns(20);
-        jTextArea5.setForeground(new java.awt.Color(0, 0, 0));
-        jTextArea5.setRows(5);
-        jScrollPane1.setViewportView(jTextArea5);
+        movimientos5.setEditable(false);
+        movimientos5.setBackground(new java.awt.Color(255, 255, 255));
+        movimientos5.setColumns(20);
+        movimientos5.setForeground(new java.awt.Color(0, 0, 0));
+        movimientos5.setRows(5);
+        jScrollPane1.setViewportView(movimientos5);
 
         JLabeltotal8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JLabeltotal8.setText("Movimientos realizados:");
@@ -320,11 +326,11 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         JTextCola.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         JTextCola.setForeground(new java.awt.Color(0, 0, 0));
 
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton3.setText("Abrir fichero Log");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        log.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        log.setText("Abrir fichero Log");
+        log.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                logActionPerformed(evt);
             }
         });
 
@@ -410,16 +416,16 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
                             .addGap(212, 212, 212)
                             .addComponent(cajero9)
                             .addGap(99, 99, 99)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(log, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(57, 57, 57)
                             .addComponent(JLabeltotal6)
                             .addGap(49, 49, 49)
                             .addComponent(total5, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(65, 65, 65)
-                            .addComponent(total6, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(operario1, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(23, 23, 23)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(pausarOp1, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(57, 57, 57)
                             .addComponent(JLabeltotal7)
@@ -431,12 +437,12 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
                                     .addGap(65, 65, 65)
-                                    .addComponent(total7, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(operario2, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGap(23, 23, 23)
-                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(pausarOp2, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(layout.createSequentialGroup()
-                                    .addGap(255, 255, 255)
-                                    .addComponent(jButton4))))))
+                                    .addGap(254, 254, 254)
+                                    .addComponent(pausar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addGap(64, 64, 64))
         );
         layout.setVerticalGroup(
@@ -497,15 +503,15 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
                     .addComponent(cajero7)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cajero9)
-                        .addComponent(jButton3)))
+                        .addComponent(log)))
                 .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(2, 2, 2)
                         .addComponent(JLabeltotal6, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(total5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(total6, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(operario1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pausarOp1))
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(JLabeltotal7, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -514,10 +520,10 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(total7, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton2))
+                            .addComponent(operario2, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pausarOp2))
                         .addGap(41, 41, 41)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(pausar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(39, Short.MAX_VALUE))
         );
@@ -525,19 +531,51 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void pausarOp1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarOp1ActionPerformed
+        if(operarios[0].isParado()){
+            pausarOp1.setText("Parar Operario");
+            operarios[0].reanudar();
+            Solicitudes.avisar();
+        }else{
+            try {
+                pausarOp1.setText("Reanudar Operario");
+                operarios[0].parar();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ModuloVisualizacion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_pausarOp1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void pausarOp2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarOp2ActionPerformed
+        if(operarios[1].isParado()){
+            pausarOp2.setText("Parar Operario");
+            operarios[1].reanudar();
+            Solicitudes.avisar();
+        }else{
+            try {
+                pausarOp2.setText("Reanudar Operario");
+                operarios[1].parar();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ModuloVisualizacion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_pausarOp2ActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void pausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarActionPerformed
+        for(Operario operario : operarios){
+            if(operario.isParado()){
+                operario.reanudar();
+            }else{
+                try {
+                    operario.parar();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ModuloVisualizacion.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_pausarActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void logActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logActionPerformed
         String nombreArchivo = "evolucionCajeros.txt";
 
         try {
@@ -553,7 +591,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
             System.out.println("Error al abrir el archivo: " + ex.getMessage());
             // Manejar la excepción (puedes mostrar un mensaje al usuario)
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_logActionPerformed
 
     /**
      * @param args the command line arguments
@@ -610,10 +648,6 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     private javax.swing.JLabel cajero7;
     private javax.swing.JLabel cajero8;
     private javax.swing.JLabel cajero9;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabeloperando1;
     private javax.swing.JLabel jLabeloperando2;
     private javax.swing.JLabel jLabeloperando3;
@@ -623,21 +657,25 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTextArea jTextArea5;
+    private javax.swing.JButton log;
     private javax.swing.JTextArea movimientos1;
     private javax.swing.JTextArea movimientos2;
     private javax.swing.JTextArea movimientos3;
     private javax.swing.JTextArea movimientos4;
+    private javax.swing.JTextArea movimientos5;
     private javax.swing.JTextField operando1;
     private javax.swing.JTextField operando2;
     private javax.swing.JTextField operando3;
     private javax.swing.JTextField operando4;
+    private javax.swing.JTextField operario1;
+    private javax.swing.JTextField operario2;
+    private javax.swing.JButton pausar;
+    private javax.swing.JButton pausarOp1;
+    private javax.swing.JButton pausarOp2;
     private javax.swing.JTextField total1;
     private javax.swing.JTextField total2;
     private javax.swing.JTextField total3;
     private javax.swing.JTextField total4;
     private javax.swing.JTextField total5;
-    private javax.swing.JTextField total6;
-    private javax.swing.JTextField total7;
     // End of variables declaration//GEN-END:variables
 }
