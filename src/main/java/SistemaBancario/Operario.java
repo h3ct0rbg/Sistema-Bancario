@@ -3,6 +3,11 @@ package SistemaBancario;
 //@author Héctor Benavente García
 //@author Jose Sánchez Nicolás
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -36,7 +41,22 @@ public class Operario implements Runnable{
         return parado;
     }
     
-    public synchronized void retirar(int cantidad) throws InterruptedException{
+    public synchronized void retirar(int cantidad) throws InterruptedException, IOException{
+        FileWriter fileWriter = new FileWriter("evolucionCajeros.txt", true); // El parámetro true indica que se añadirá al final del archivo
+            
+        // Obtener la fecha actual
+        Date fechaActual = new Date();
+
+        // Formatear la fecha
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String fecha = formatoFecha.format(fechaActual);
+
+        String mensajeLog = "["+fecha+"] - "+"Operario"+id+"-C"+cajero.getId()+"+"+cantidad+"\n";
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            bufferedWriter.write(mensajeLog);
+        }
+        
         Thread.sleep(2000);
         int dinero = cajero.getDinero();
         cajero.setDinero(dinero-cantidad);
@@ -45,7 +65,22 @@ public class Operario implements Runnable{
         movimientos.append("Operario"+id+"-C"+cajero.getId()+"+50.000"+"\n");
     }
     
-    public synchronized void depositar(int cantidad) throws InterruptedException{
+    public synchronized void depositar(int cantidad) throws InterruptedException, IOException{
+        FileWriter fileWriter = new FileWriter("evolucionCajeros.txt", true); // El parámetro true indica que se añadirá al final del archivo
+            
+        // Obtener la fecha actual
+        Date fechaActual = new Date();
+
+        // Formatear la fecha
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String fecha = formatoFecha.format(fechaActual);
+
+        String mensajeLog = "["+fecha+"] - "+"Operario"+id+"-C"+cajero.getId()+"-"+cantidad+"\n";
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            bufferedWriter.write(mensajeLog);
+        }
+        
         Thread.sleep(3000);
          int cant = BancoCentral.extraer(cantidad);
          int dinero = cajero.getDinero();
@@ -68,6 +103,7 @@ public class Operario implements Runnable{
         try {
             parado = false;
             condicionParado.signal();
+            Solicitudes.avisar();
         } finally {
             lock.unlock();
         }
@@ -90,7 +126,7 @@ public class Operario implements Runnable{
                     depositar(50000);
                     op.setText("");
             }
-            }catch (InterruptedException ex) {
+            }catch (InterruptedException | IOException ex) {
                 Logger.getLogger(Operario.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

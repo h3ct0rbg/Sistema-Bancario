@@ -6,6 +6,8 @@ package SistemaBancario;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -23,8 +25,6 @@ public class Cajero implements Runnable {
     private JTextArea movimientos;
     private int dinero;
     private Persona persona;
-    private String archivo = "evolucionCajeros.txt";
-    private String mensajeLog = "";
     private final Lock lock = new ReentrantLock();
     private final Condition condicionParado = lock.newCondition();
     private boolean parado = false;
@@ -61,11 +61,19 @@ public class Cajero implements Runnable {
         try{
             operando.setText(persona.getId()+"-I+"+persona.getDinero());
             movimientos.append(persona.getId()+"-I+"+persona.getDinero()+"\n");
-            mensajeLog = persona.getId()+"-I+"+persona.getDinero()+ " en el Cajero " + id +"\n";
-            FileWriter fileWriter = new FileWriter(archivo, true); // El parámetro true indica que se añadirá al final del archivo
+            FileWriter fileWriter = new FileWriter("evolucionCajeros.txt", true); // El parámetro true indica que se añadirá al final del archivo
+            
+            // Obtener la fecha actual
+            Date fechaActual = new Date();
+
+            // Formatear la fecha
+            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String fecha = formatoFecha.format(fechaActual);
+
+            String mensajeLog = "["+fecha+"] - "+persona.getId()+"-I+"+persona.getDinero()+ " en el Cajero "+id +"\n";
+            
             try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
                 bufferedWriter.write(mensajeLog);
-                bufferedWriter.newLine(); // Añadir nueva línea para el próximo registro
             }
             
             Random rand = new Random();
@@ -87,11 +95,19 @@ public class Cajero implements Runnable {
         try{
             operando.setText(persona.getId()+"-E-"+persona.getDinero());
             movimientos.append(persona.getId()+"-E-"+persona.getDinero()+"\n");
-            mensajeLog = persona.getId()+"-I+"+persona.getDinero()+ " en el Cajero " + id +"\n";
-            FileWriter fileWriter = new FileWriter(archivo, true); // El parámetro true indica que se añadirá al final del archivo
+            FileWriter fileWriter = new FileWriter("evolucionCajeros.txt", true); // El parámetro true indica que se añadirá al final del archivo
+            
+            // Obtener la fecha actual
+            Date fechaActual = new Date();
+
+            // Formatear la fecha
+            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String fecha = formatoFecha.format(fechaActual);
+
+            String mensajeLog = "["+fecha+"] - "+persona.getId()+"-E-"+persona.getDinero()+ " en el Cajero "+id +"\n";
+            
             try (BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
                 bufferedWriter.write(mensajeLog);
-                bufferedWriter.newLine(); // Añadir nueva línea para el próximo registro
             }
 
             Random rand = new Random();
@@ -136,35 +152,34 @@ public class Cajero implements Runnable {
         this.notify();
     }
     
-@Override
-public void run() {
-    try {
-        total.setText(String.valueOf(dinero));
-        Thread.sleep(5000);
-        while (!Cola.estaVacia()) {
-            lock.lock(); // Adquirir el bloqueo antes de usar la condición
-            try {
-                if (parado) {
-                    condicionParado.await(); // Esperar si está pausado
+    @Override
+    public void run() {
+        try {
+            total.setText(String.valueOf(dinero));
+            Thread.sleep(5000);
+            while (!Cola.estaVacia()) {
+                lock.lock(); // Adquirir el bloqueo antes de usar la condición
+                try {
+                    if (parado) {
+                        condicionParado.await(); // Esperar si está pausado
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Cajero.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    lock.unlock(); // Liberar el bloqueo
                 }
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Cajero.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                lock.unlock(); // Liberar el bloqueo
-            }
-            
-            persona = Cola.sacar();
-            if (persona != null) {
-                if (persona.getOperacion()) {
-                    insertar(persona.getDinero());
-                } else {
-                    extraer(persona.getDinero());
-                }
-            }
-        }
-    } catch (InterruptedException e) {
-        // Manejo de la interrupción
-    }
-}
 
+                persona = Cola.sacar();
+                if (persona != null) {
+                    if (persona.getOperacion()) {
+                        insertar(persona.getDinero());
+                    } else {
+                        extraer(persona.getDinero());
+                    }
+                }
+            }
+        } catch (InterruptedException e) {
+            // Manejo de la interrupción
+        }
+    }
 }
