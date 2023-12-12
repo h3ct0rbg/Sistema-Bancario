@@ -139,16 +139,16 @@ public class Cajero implements Runnable {
     @Override
     public void run() {
         try{
-            while(parado){
-                try {
-                    condicionParado.await();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Operario.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
             total.setText(String.valueOf(dinero));
             Thread.sleep(5000);
             while(!Cola.estaVacia()){
+                while(parado){
+                    try {
+                        condicionParado.await();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Cajero.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                 persona = Cola.sacar();
                 if(persona.getOperacion()){
                     insertar(persona.getDinero());

@@ -7027,3 +7027,101 @@ Persona44-I+8000 en el Cajero 3
 
 Persona28-I+9000 en el Cajero 4
 
+Persona169-I+5000 en el Cajero 4
+
+Persona150-I+5000 en el Cajero 1
+
+Persona50-I+7000 en el Cajero 3
+
+Persona56-I+9000 en el Cajero 2
+
+Persona74-I+8000 en el Cajero 4
+
+Persona184-I+9000 en el Cajero 2
+
+Persona57-I+10000 en el Cajero 3
+
+Persona147-I+8000 en el Cajero 1
+
+Persona97-I+6000 en el Cajero 4
+
+Persona58-I+7000 en el Cajero 2
+
+Persona21-I+9000 en el Cajero 1
+
+Persona88-I+6000 en el Cajero 3
+
+Persona186-I+10000 en el Cajero 4
+
+Persona96-I+6000 en el Cajero 2
+
+Persona170-I+7000 en el Cajero 1
+
+Persona166-I+6000 en el Cajero 3
+
+Persona183-I+8000 en el Cajero 4
+
+Persona164-I+8000 en el Cajero 1
+
+Persona129-I+8000 en el Cajero 2
+
+Persona61-I+7000 en el Cajero 4
+
+Persona44-I+7000 en el Cajero 3
+
+Persona141-I+9000 en el Cajero 4
+
+Persona87-I+10000 en el Cajero 1
+
+Persona130-I+9000 en el Cajero 3
+
+Persona90-I+9000 en el Cajero 2
+
+Persona60-I+8000 en el Cajero 1
+
+Persona155-I+10000 en el Cajero 4
+
+Persona192-I+10000 en el Cajero 3
+
+Persona91-I+9000 en el Cajero 2
+
+Persona148-I+5000 en el Cajero 1
+
+Persona194-I+10000 en el Cajero 2
+
+Persona46-I+6000 en el Cajero 4
+
+Persona140-I+7000 en el Cajero 3
+
+Persona55-I+8000 en el Cajero 2
+
+Persona189-I+8000 en el Cajero 3
+
+Persona183-I+10000 en el Cajero 1
+
+Persona89-I+6000 en el Cajero 4
+
+Persona95-I+10000 en el Cajero 2
+
+Persona17-I+5000 en el Cajero 3
+
+Persona171-I+5000 en el Cajero 1
+
+Persona146-I+10000 en el Cajero 4
+
+Persona85-I+10000 en el Cajero 1
+
+Persona175-I+10000 en el Cajero 4
+
+Persona70-I+5000 en el Cajero 3
+
+Persona169-I+9000 en el Cajero 2
+
+Persona82-I+9000 en el Cajero 2
+
+Persona148-I+8000 en el Cajero 1
+
+Persona71-I+7000 en el Cajero 3
+
+Persona154-I+5000 en el Cajero 4
+

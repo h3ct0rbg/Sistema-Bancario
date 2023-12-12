@@ -76,32 +76,23 @@ public class Operario implements Runnable{
     @Override
     public void run() {
         while(true){
+            try{
             while(parado){
-                try {
-                    condicionParado.await();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Operario.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                condicionParado.await();
             }
             cajero = Solicitudes.sacar(this);
             if(cajero.getPersona().getOperacion()){
-                try {
                     op.setText("Llevando 50.000 del Cajero"+cajero.getId()+" al Banco Central");
                     retirar(50000);
                     op.setText("");
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Operario.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }else{
-                try {
                     op.setText("Trayendo 50.000 del Banco Central al Cajero"+cajero.getId());
                     depositar(50000);
                     op.setText("");
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Operario.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            }
+            }catch (InterruptedException ex) {
+                Logger.getLogger(Operario.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-    
 }

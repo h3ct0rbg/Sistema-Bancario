@@ -587,19 +587,17 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         pausarOp1.setText(texto);
         pausarOp2.setText(texto);
         
-        /**
         for(Cajero cajero : cajeros){
-            if(cajero.isParado()){
+            if(cajeros[cajero.getId()-1].isParado()){
                 cajeros[cajero.getId()-1].reanudar();
             }else{
                 try {
-                    cajero.parar();
+                    cajeros[cajero.getId()-1].parar();
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ModuloVisualizacion.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
-        */
     }//GEN-LAST:event_pausarActionPerformed
 
     private void logActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logActionPerformed
