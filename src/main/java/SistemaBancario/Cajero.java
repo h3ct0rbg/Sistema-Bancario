@@ -1,8 +1,5 @@
 package SistemaBancario;
 
-//@author Héctor Benavente García
-//@author Jose Sánchez Nicolás
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,6 +14,13 @@ import java.util.logging.Logger;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+/**
+ * Clase que representa a un cajero en el sistema bancario.
+ * Cada cajero opera en un hilo separado y realiza transacciones según las solicitudes de la cola.
+ * 
+ * @author Héctor Benavente García
+ * @author Jose Sánchez Nicolás
+ */
 public class Cajero implements Runnable {
 
     private int id;
@@ -25,10 +29,18 @@ public class Cajero implements Runnable {
     private JTextArea movimientos;
     private int dinero;
     private Persona persona;
-    private final Lock lock = new ReentrantLock();
-    private final Condition condicionParado = lock.newCondition();
+    private final Lock lock = new ReentrantLock(); // Bloqueo para asegurar la exclusión mutua
+    private final Condition condicionParado = lock.newCondition(); // Condición para pausar el cajero
     private boolean parado = false;
     
+    /**
+     * Constructor de la clase Cajero.
+     * 
+     * @param id Identificador único del cajero.
+     * @param total Campo de texto que muestra el total de dinero en el cajero.
+     * @param operando Campo de texto que muestra la operación actual del cajero.
+     * @param movimientos Área de texto que registra los movimientos del cajero.
+     */
     public Cajero(int id, JTextField total, JTextField operando, JTextArea movimientos) {
         this.id = id;
         this.total = total;
@@ -37,26 +49,56 @@ public class Cajero implements Runnable {
         dinero = 50000;
     }
 
+    /**
+     * Obtiene el identificador único del cajero.
+     * 
+     * @return Identificador del cajero.
+     */
     public int getId() {
         return id;
     }
         
+    /**
+     * Obtiene la persona actualmente atendida por el cajero.
+     * 
+     * @return Persona actualmente atendida.
+     */
     public Persona getPersona() {
         return persona;
     }
 
+    /**
+     * Obtiene la cantidad de dinero actual en el cajero.
+     * 
+     * @return Cantidad de dinero en el cajero.
+     */
     public int getDinero() {
         return dinero;
     }
     
+    /**
+     * Verifica si el cajero está en estado pausado.
+     * 
+     * @return true si el cajero está pausado, false en caso contrario.
+     */
     public boolean isParado() {
         return parado;
     }
 
+    /**
+     * Establece la cantidad de dinero en el cajero.
+     * 
+     * @param dinero Nueva cantidad de dinero en el cajero.
+     */
     public void setDinero(int dinero) {
         this.dinero = dinero;
     }
     
+    /**
+     * Realiza la operación de insertar dinero en el cajero.
+     * 
+     * @param cantidad Cantidad de dinero a insertar.
+     */
     public synchronized void insertar(int cantidad){
         try{
             operando.setText(persona.getId()+"-I+"+persona.getDinero());
@@ -91,6 +133,11 @@ public class Cajero implements Runnable {
         }
     }
     
+    /**
+     * Realiza la operación de extraer dinero del cajero.
+     * 
+     * @param cantidad Cantidad de dinero a extraer.
+     */
     public synchronized void extraer(int cantidad){
         try{
             operando.setText(persona.getId()+"-E-"+persona.getDinero());
@@ -125,6 +172,11 @@ public class Cajero implements Runnable {
         }
     }
     
+    /**
+     * Pausa la ejecución del cajero.
+     * 
+     * @throws InterruptedException Si se interrumpe la espera.
+     */
     public void parar() throws InterruptedException {
         lock.lock();
         try {
@@ -134,6 +186,9 @@ public class Cajero implements Runnable {
         }
     }
 
+    /**
+     * Reanuda la ejecución del cajero.
+     */
     public void reanudar() {
         lock.lock();
         try {
@@ -144,10 +199,18 @@ public class Cajero implements Runnable {
         }
     }
     
+    /**
+     * Método para pausar la ejecución del hilo.
+     * 
+     * @throws InterruptedException Si se interrumpe la espera.
+     */
     public synchronized void stop() throws InterruptedException{
         this.wait();
     }
     
+    /**
+     * Método para reanudar la ejecución del hilo.
+     */
     public synchronized void start(){
         this.notify();
     }
@@ -163,8 +226,6 @@ public class Cajero implements Runnable {
                     if (parado) {
                         condicionParado.await(); // Esperar si está pausado
                     }
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Cajero.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     lock.unlock(); // Liberar el bloqueo
                 }

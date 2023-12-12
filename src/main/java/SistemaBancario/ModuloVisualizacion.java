@@ -1,69 +1,98 @@
 package SistemaBancario;
 
-//@author Héctor Benavente García
-//@author Jose Sánchez Nicolás
-
 import java.awt.Desktop;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Clase que representa el módulo de visualización de la aplicación bancaria.
+ * Se encarga de inicializar los componentes, gestionar la pausa y reanudación
+ * de operarios y cajeros, y proporcionar funcionalidad para abrir el archivo
+ * de registro del sistema bancario.
+ * 
+ * @author Héctor Benavente García
+ * @author Jose Sánchez Nicolás
+ */
 public class ModuloVisualizacion extends javax.swing.JFrame {
 
-    private FileWriter fileWriter;
-    private PrintWriter pw;
-    
-    private BancoCentral bancoCentral;
-    private Cajero[] cajeros;
-    private Operario[] operarios;
-        
-    public ModuloVisualizacion() {
-        initComponents();
-        setLocationRelativeTo(null);
-        
-        try{
-            //Log del sistema bancario
-            fileWriter = new FileWriter("evolucionCajeros.txt", true);
-            pw = new PrintWriter(fileWriter);
-            
-            BancoCentral.inicializar(total5);
-            cajeros = new Cajero[4]; //Array de cajeros
-            operarios = new Operario[2]; //Array de operarios
-            Cola.inicializar(10, JTextCola);
-            Solicitudes.inicializar(4);
-            
-            operarios[0] = new Operario(1, operario1, movimientos5);
-            operarios[1] = new Operario(2, operario2, movimientos5);
+    private FileWriter fileWriter; // Escritor de archivos
+    private PrintWriter pw;        // Escritor de archivos
 
-            for (int i = 1; i <= 200; i++) {
-                Thread persona = new Thread(new Persona("Persona"+i));
-                persona.start();
-            }
-            
-            //Cajeros
-            cajeros[0] = new Cajero(1, total1, operando1, movimientos1);
-            cajeros[1] = new Cajero(2, total2, operando2, movimientos2);
-            cajeros[2] = new Cajero(3, total3, operando3, movimientos3);
-            cajeros[3] = new Cajero(4, total4, operando4, movimientos4);
-            
-            for (Cajero cajero : cajeros) {
-                Thread hiloCajero = new Thread(cajero);
-                hiloCajero.start();
-            }
-            
-            for (Operario operario : operarios) {
-                Thread hiloOperario = new Thread(operario);
-                hiloOperario.start();
-            }
-            
-        } catch(IOException e) {}    
+    private BancoCentral bancoCentral; // Instancia del banco central
+    private Cajero[] cajeros;          // Array de cajeros
+    private Operario[] operarios;      // Array de operarios
+
+    /**
+ * Constructor de la clase ModuloVisualizacion.
+ */
+public ModuloVisualizacion() {
+    initComponents();
+    setLocationRelativeTo(null);
+
+    // Inicialización del log del sistema bancario
+    try {
+        fileWriter = new FileWriter("evolucionCajeros.txt", true);
+        pw = new PrintWriter(fileWriter);
+    } catch (IOException e) {
+        // Manejar la excepción (puedes mostrar un mensaje al usuario)
     }
+
+    // Inicialización de componentes bancarios
+    inicializarBanco();
+
+    // Inicialización de cajeros y operarios
+    inicializarCajerosOperarios();
+}
+
+/**
+ * Inicializa los componentes relacionados con el sistema bancario.
+ */
+private void inicializarBanco() {
+    BancoCentral.inicializar(total5);
+    Cola.inicializar(10, JTextCola);
+    Solicitudes.inicializar(4);
+}
+
+    /**
+     * Inicializa los cajeros y operarios, y comienza sus hilos.
+     */
+    private void inicializarCajerosOperarios() {
+        operarios = new Operario[2];  // Array de operarios
+        cajeros = new Cajero[4];      // Array de cajeros
+
+        // Creación e inicio de hilos para 200 personas
+        for (int i = 1; i <= 200; i++) {
+            Thread persona = new Thread(new Persona("Persona" + i));
+            persona.start();
+        }
+        
+        // Inicialización de operarios
+        operarios[0] = new Operario(1, operario1, movimientos5);
+        operarios[1] = new Operario(2, operario2, movimientos5);
+        
+        // Inicialización de cajeros
+        cajeros[0] = new Cajero(1, total1, operando1, movimientos1);
+        cajeros[1] = new Cajero(2, total2, operando2, movimientos2);
+        cajeros[2] = new Cajero(3, total3, operando3, movimientos3);
+        cajeros[3] = new Cajero(4, total4, operando4, movimientos4);
+
+        // Inicio de hilos para cajeros
+        for (Cajero cajero : cajeros) {
+            Thread hiloCajero = new Thread(cajero);
+            hiloCajero.start();
+        }
+        
+        // Inicio de hilos para operarios
+        for (Operario operario : operarios) {
+            Thread hiloOperario = new Thread(operario);
+            hiloOperario.start();
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -534,6 +563,10 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Maneja el evento de pausar o reanudar el Operario 1.
+     * @param evt Evento de acción.
+     */
     private void pausarOp1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarOp1ActionPerformed
         if(operarios[0].isParado()){
             pausarOp1.setText("Pausar Operario");
@@ -549,6 +582,10 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_pausarOp1ActionPerformed
 
+    /**
+     * Maneja el evento de pausar o reanudar el Operario 2.
+     * @param evt Evento de acción.
+     */
     private void pausarOp2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarOp2ActionPerformed
         if(operarios[1].isParado()){
             pausarOp2.setText("Pausar Operario");
@@ -564,21 +601,17 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_pausarOp2ActionPerformed
 
+    /**
+     * Maneja el evento de pausar o reanudar todos los cajeros y operarios.
+     * @param evt Evento de acción.
+     */
     private void pausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarActionPerformed
-        if("Pausar".equals(pausar.getText())){
-            pausar.setText("Reanudar");
-        }else{
-            pausar.setText("Pausar");
-        }
-        
         String texto = null;
         
-        for(Operario operario : operarios){
-            if(operario.isParado()){
-                texto = "Pausar Operario";
-                operarios[operario.getId()-1].reanudar();
-                Solicitudes.avisar();
-            }else{
+        if("Pausar".equals(pausar.getText())){
+            pausar.setText("Reanudar");
+            
+            for(Operario operario : operarios){
                 try {
                     texto = "Reanudar Operario";
                     operario.parar();
@@ -586,23 +619,36 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
                     Logger.getLogger(ModuloVisualizacion.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }
-        pausarOp1.setText(texto);
-        pausarOp2.setText(texto);
-        
-        for(Cajero cajero : cajeros){
-            if(cajeros[cajero.getId()-1].isParado()){
-                cajeros[cajero.getId()-1].reanudar();
-            }else{
+            
+            for(Cajero cajero : cajeros){
                 try {
                     cajeros[cajero.getId()-1].parar();
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ModuloVisualizacion.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+        }else{
+            pausar.setText("Pausar");
+            
+            for(Operario operario : operarios){
+                texto = "Pausar Operario";
+                operarios[operario.getId()-1].reanudar();
+                Solicitudes.avisar();
+            }
+            
+            for(Cajero cajero : cajeros){
+                cajeros[cajero.getId()-1].reanudar();
+            }
         }
+        
+        pausarOp1.setText(texto);
+        pausarOp2.setText(texto);
     }//GEN-LAST:event_pausarActionPerformed
 
+    /**
+     * Maneja el evento de abrir el archivo de registro del sistema bancario.
+     * @param evt Evento de acción.
+     */
     private void logActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logActionPerformed
         String nombreArchivo = "evolucionCajeros.txt";
 
