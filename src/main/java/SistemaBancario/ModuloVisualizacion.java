@@ -35,8 +35,8 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
             Cola.inicializar(10, JTextCola);
             Solicitudes.inicializar(4);
             
-            operarios[0] = new Operario("Operario1", operario1, movimientos5);
-            operarios[1] = new Operario("Operario2", operario2, movimientos5);
+            operarios[0] = new Operario(1, operario1, movimientos5);
+            operarios[1] = new Operario(2, operario2, movimientos5);
 
             for (int i = 1; i <= 200; i++) {
                 Thread persona = new Thread(new Persona("Persona"+i));
@@ -533,7 +533,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
 
     private void pausarOp1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarOp1ActionPerformed
         if(operarios[0].isParado()){
-            pausarOp1.setText("Parar Operario");
+            pausarOp1.setText("Pausar Operario");
             operarios[0].reanudar();
             Solicitudes.avisar();
         }else{
@@ -548,7 +548,7 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
 
     private void pausarOp2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarOp2ActionPerformed
         if(operarios[1].isParado()){
-            pausarOp2.setText("Parar Operario");
+            pausarOp2.setText("Pausar Operario");
             operarios[1].reanudar();
             Solicitudes.avisar();
         }else{
@@ -562,17 +562,44 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     }//GEN-LAST:event_pausarOp2ActionPerformed
 
     private void pausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarActionPerformed
+        if("Pausar".equals(pausar.getText())){
+            pausar.setText("Reanudar");
+        }else{
+            pausar.setText("Pausar");
+        }
+        
+        String texto = null;
+        
         for(Operario operario : operarios){
             if(operario.isParado()){
-                operario.reanudar();
+                texto = "Pausar Operario";
+                operarios[operario.getId()-1].reanudar();
+                Solicitudes.avisar();
             }else{
                 try {
+                    texto = "Reanudar Operario";
                     operario.parar();
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ModuloVisualizacion.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
+        pausarOp1.setText(texto);
+        pausarOp2.setText(texto);
+        
+        /**
+        for(Cajero cajero : cajeros){
+            if(cajero.isParado()){
+                cajeros[cajero.getId()-1].reanudar();
+            }else{
+                try {
+                    cajero.parar();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ModuloVisualizacion.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        */
     }//GEN-LAST:event_pausarActionPerformed
 
     private void logActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logActionPerformed

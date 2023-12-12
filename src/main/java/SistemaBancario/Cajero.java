@@ -7,6 +7,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
@@ -22,6 +25,9 @@ public class Cajero implements Runnable {
     private Persona persona;
     private String archivo = "evolucionCajeros.txt";
     private String mensajeLog = "";
+    private final Lock lock = new ReentrantLock();
+    private final Condition condicionParado = lock.newCondition();
+    private boolean parado = false;
     
     public Cajero(int id, JTextField total, JTextField operando, JTextArea movimientos) {
         this.id = id;
@@ -42,6 +48,10 @@ public class Cajero implements Runnable {
     public int getDinero() {
         return dinero;
     }
+    
+    public boolean isParado() {
+        return parado;
+    }
 
     public void setDinero(int dinero) {
         this.dinero = dinero;
@@ -57,8 +67,6 @@ public class Cajero implements Runnable {
                 bufferedWriter.write(mensajeLog);
                 bufferedWriter.newLine(); // Añadir nueva línea para el próximo registro
             }
-            System.out.println(mensajeLog + "guardado en log");
-            System.out.println("Registro guardado correctamente en el archivo.");
             
             Random rand = new Random();
             Thread.sleep(rand.nextInt(2000)+2000);
@@ -66,7 +74,7 @@ public class Cajero implements Runnable {
             if (dinero>=100000) {
                 Solicitudes.meter(this);
                 while(dinero>=100000){
-                    parar();
+                    stop();
                 }
             }
             total.setText(String.valueOf(dinero));
@@ -85,15 +93,14 @@ public class Cajero implements Runnable {
                 bufferedWriter.write(mensajeLog);
                 bufferedWriter.newLine(); // Añadir nueva línea para el próximo registro
             }
-            System.out.println(mensajeLog + "guardado en log");
-            System.out.println("Registro guardado correctamente en el archivo.");
+
             Random rand = new Random();
             Thread.sleep(rand.nextInt(2000)+2500);
             dinero -= cantidad;
             if (dinero<=0) {
                 Solicitudes.meter(this);
                 while(dinero<=0){
-                    parar();
+                    stop();
                 }
             }
             total.setText(String.valueOf(dinero));
@@ -102,17 +109,43 @@ public class Cajero implements Runnable {
         }
     }
     
-    public synchronized void parar() throws InterruptedException{
+    public void parar() throws InterruptedException {
+        lock.lock();
+        try {
+            parado = true;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void reanudar() {
+        lock.lock();
+        try {
+            parado = false;
+            condicionParado.signal();
+        } finally {
+            lock.unlock();
+        }
+    }
+    
+    public synchronized void stop() throws InterruptedException{
         this.wait();
     }
     
-    public synchronized void reanudar(){
+    public synchronized void start(){
         this.notify();
     }
     
     @Override
     public void run() {
         try{
+            while(parado){
+                try {
+                    condicionParado.await();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Operario.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             total.setText(String.valueOf(dinero));
             Thread.sleep(5000);
             while(!Cola.estaVacia()){
@@ -122,7 +155,6 @@ public class Cajero implements Runnable {
                 }else{
                     extraer(persona.getDinero());
                 }
-                System.out.println(persona.getId());
             }
         } catch(InterruptedException e) {}
     }

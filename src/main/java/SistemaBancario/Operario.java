@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 
 public class Operario implements Runnable{
     
-    private String id;
+    private int id;
     private JTextField op;
     private JTextArea movimientos;
     private Cajero cajero;
@@ -21,33 +21,37 @@ public class Operario implements Runnable{
     private final Condition condicionParado = lock.newCondition();
     private boolean parado = false;
     
-    public Operario(String id, JTextField op, JTextArea movimientos) {
+    public Operario(int id, JTextField op, JTextArea movimientos) {
         this.id = id;
         this.op = op;
         this.movimientos = movimientos;
         parado = false;
     }
 
+    public int getId() {
+        return id;
+    }
+    
     public boolean isParado() {
         return parado;
     }
     
-    public void retirar(int cantidad) throws InterruptedException{
+    public synchronized void retirar(int cantidad) throws InterruptedException{
         Thread.sleep(2000);
         int dinero = cajero.getDinero();
         cajero.setDinero(dinero-cantidad);
-        cajero.reanudar();
+        cajero.start();
         BancoCentral.insertar(cantidad);
-        movimientos.append(id+"-C"+cajero.getId()+"+50.000"+"\n");
+        movimientos.append("Operario"+id+"-C"+cajero.getId()+"+50.000"+"\n");
     }
     
-    public void depositar(int cantidad) throws InterruptedException{
+    public synchronized void depositar(int cantidad) throws InterruptedException{
         Thread.sleep(3000);
          int cant = BancoCentral.extraer(cantidad);
          int dinero = cajero.getDinero();
          cajero.setDinero(dinero+cant);
-         movimientos.append(id+"-C"+cajero.getId()+"-50.000"+"\n");
-         cajero.reanudar();
+         movimientos.append("Operario"+id+"-C"+cajero.getId()+"-50.000"+"\n");
+         cajero.start();
     }
     
     public void parar() throws InterruptedException {
