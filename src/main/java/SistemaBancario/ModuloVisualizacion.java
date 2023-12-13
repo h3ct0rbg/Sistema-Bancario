@@ -27,53 +27,47 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
     private Operario[] operarios;      // Array de operarios
 
     /**
- * Constructor de la clase ModuloVisualizacion.
- */
-public ModuloVisualizacion() {
-    initComponents();
-    setLocationRelativeTo(null);
+     * Constructor de la clase ModuloVisualizacion.
+     */
+    public ModuloVisualizacion() {
+        initComponents();
+        setLocationRelativeTo(null);
 
-    // Inicialización del log del sistema bancario
-    try {
-        fileWriter = new FileWriter("evolucionCajeros.txt", true);
-        pw = new PrintWriter(fileWriter);
-    } catch (IOException e) {
-        // Manejar la excepción (puedes mostrar un mensaje al usuario)
+        // Inicialización del log del sistema bancario
+        try {
+            fileWriter = new FileWriter("evolucionCajeros.txt", true);
+            pw = new PrintWriter(fileWriter);
+        } catch (IOException e) {}
+
+        // Inicialización de componentes relacionados con el sistema bancario
+        Cola.inicializar(10, JTextCola);
+        Solicitudes.inicializar(4);
+        BancoCentral.inicializar(total5);
+
+        // Inicialización de personas, cajeros y operarios, y comienzo de sus hilos
+        inicializarPersonas();
+        inicializarCajeros();
+        inicializarOperarios();
     }
 
-    // Inicialización de componentes bancarios
-    inicializarBanco();
+    /**
+     * Inicializa las personas en el sistema bancario.
+     */
+    private void inicializarPersonas() {
+        for (int i = 1; i <= 200; i++) {
+            Persona persona = new Persona("Persona" + i);
+            Thread hiloPersona = new Thread(persona);
+            hiloPersona.start();
+        }
+    }
 
-    // Inicialización de cajeros y operarios
-    inicializarCajerosOperarios();
-}
-
-/**
- * Inicializa los componentes relacionados con el sistema bancario.
- */
-private void inicializarBanco() {
-    BancoCentral.inicializar(total5);
-    Cola.inicializar(10, JTextCola);
-    Solicitudes.inicializar(4);
-}
 
     /**
-     * Inicializa los cajeros y operarios, y comienza sus hilos.
+     * Inicializa los cajeros en el sistema bancario.
      */
-    private void inicializarCajerosOperarios() {
-        operarios = new Operario[2];  // Array de operarios
+    private void inicializarCajeros() {
         cajeros = new Cajero[4];      // Array de cajeros
 
-        // Creación e inicio de hilos para 200 personas
-        for (int i = 1; i <= 200; i++) {
-            Thread persona = new Thread(new Persona("Persona" + i));
-            persona.start();
-        }
-        
-        // Inicialización de operarios
-        operarios[0] = new Operario(1, operario1, movimientos5);
-        operarios[1] = new Operario(2, operario2, movimientos5);
-        
         // Inicialización de cajeros
         cajeros[0] = new Cajero(1, total1, operando1, movimientos1);
         cajeros[1] = new Cajero(2, total2, operando2, movimientos2);
@@ -85,14 +79,24 @@ private void inicializarBanco() {
             Thread hiloCajero = new Thread(cajero);
             hiloCajero.start();
         }
-        
+    }
+
+    /**
+     * Inicializa los operarios en el sistema bancario.
+     */
+    private void inicializarOperarios() {
+        operarios = new Operario[2];  // Array de operarios
+
+        // Inicialización de operarios
+        operarios[0] = new Operario(1, operario1, movimientos5);
+        operarios[1] = new Operario(2, operario2, movimientos5);
+
         // Inicio de hilos para operarios
         for (Operario operario : operarios) {
             Thread hiloOperario = new Thread(operario);
             hiloOperario.start();
         }
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -659,11 +663,9 @@ private void inicializarBanco() {
                 Desktop.getDesktop().open(archivo);
             } else {
                 System.out.println("El archivo no existe.");
-                // Aquí podrías mostrar un mensaje al usuario indicando que el archivo no se encontró
             }
         } catch (IOException ex) {
             System.out.println("Error al abrir el archivo: " + ex.getMessage());
-            // Manejar la excepción (puedes mostrar un mensaje al usuario)
         }
     }//GEN-LAST:event_logActionPerformed
 

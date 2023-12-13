@@ -124,7 +124,7 @@ public class Cajero implements Runnable {
             if (dinero>=100000) {
                 Solicitudes.meter(this);
                 while(dinero>=100000){
-                    stop();
+                    this.wait();
                 }
             }
             total.setText(String.valueOf(dinero));
@@ -163,7 +163,7 @@ public class Cajero implements Runnable {
             if (dinero<=0) {
                 Solicitudes.meter(this);
                 while(dinero<=0){
-                    stop();
+                    this.wait();
                 }
             }
             total.setText(String.valueOf(dinero));
@@ -198,20 +198,11 @@ public class Cajero implements Runnable {
             lock.unlock();
         }
     }
-    
-    /**
-     * Método para pausar la ejecución del hilo.
-     * 
-     * @throws InterruptedException Si se interrumpe la espera.
-     */
-    public synchronized void stop() throws InterruptedException{
-        this.wait();
-    }
-    
+        
     /**
      * Método para reanudar la ejecución del hilo.
      */
-    public synchronized void start(){
+    public synchronized void avisar(){
         this.notify();
     }
     

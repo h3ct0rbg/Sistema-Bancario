@@ -88,7 +88,7 @@ public class Operario implements Runnable {
         Thread.sleep(2000);
         int dinero = cajero.getDinero();
         cajero.setDinero(dinero - cantidad);
-        cajero.start();
+        cajero.avisar();
         BancoCentral.insertar(cantidad);
         movimientos.append("Operario" + id + "-C" + cajero.getId() + "+50.000" + "\n");
     }
@@ -121,7 +121,7 @@ public class Operario implements Runnable {
         int dinero = cajero.getDinero();
         cajero.setDinero(dinero + cant);
         movimientos.append("Operario" + id + "-C" + cajero.getId() + "-50.000" + "\n");
-        cajero.start();
+        cajero.avisar();
     }
 
     /**

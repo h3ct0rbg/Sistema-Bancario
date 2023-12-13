@@ -17,8 +17,8 @@ public class Solicitudes {
     private static int tamano;  // Tamaño máximo de la cola
     private static int ocupados; // Número de elementos ocupados en la cola
     private static Lock cerrojo = new ReentrantLock(); // Bloqueo para asegurar la exclusión mutua
-    private static Condition meter = cerrojo.newCondition(); // Condición para meter elementos
-    private static Condition sacar = cerrojo.newCondition(); // Condición para sacar elementos
+    private static Condition meter; // Condición para meter elementos
+    private static Condition sacar; // Condición para sacar elementos
 
     /**
      * Inicializa la cola de solicitudes de cajeros.
@@ -29,6 +29,8 @@ public class Solicitudes {
         tamano = size;
         cola = new Cajero[tamano];
         ocupados = 0;
+        meter = cerrojo.newCondition();
+        sacar = cerrojo.newCondition();
     }
 
     /**

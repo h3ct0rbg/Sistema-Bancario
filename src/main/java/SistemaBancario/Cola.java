@@ -20,10 +20,10 @@ public class Cola {
     private static int tamano;  // Tamaño máximo de la cola
     private static int ocupados; // Número de elementos ocupados en la cola
     private static Lock cerrojo = new ReentrantLock(); // Cerrojo para asegurar la exclusión mutua
-    private static Condition meter = cerrojo.newCondition(); // Condición para encolar
-    private static Condition sacar = cerrojo.newCondition(); // Condición para desencolar
+    private static Condition meter; // Condición para encolar
+    private static Condition sacar; // Condición para desencolar
     private static JTextField tf;
-
+        
     /**
      * Inicializa la cola con un tamaño dado y un campo de texto para visualización.
      * 
@@ -35,6 +35,8 @@ public class Cola {
         cola = new Persona[tamano];
         ocupados = 0;
         tf = textField;
+        meter = cerrojo.newCondition(); // Condición para encolar
+        sacar = cerrojo.newCondition(); // Condición para desencolar
     }
 
     /**
