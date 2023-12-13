@@ -1,10 +1,22 @@
-package SistemaBancario;
+package InterfacesGraficas;
 
+import SistemaBancario.BancoCentral;
+import SistemaBancario.Cajero;
+import SistemaBancario.Cola;
+import SistemaBancario.Operario;
+import SistemaBancario.Persona;
+import SistemaBancario.Solicitudes;
+import SistemaBancarioDistribuido.InterfaceServidor;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -96,6 +108,58 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
             Thread hiloOperario = new Thread(operario);
             hiloOperario.start();
         }
+    }
+    
+    /**
+     * Método RMI para recoger los datos del dinero de los cajeros
+     * @return 
+     */
+    public String[] getTotales(){
+        String[] totales = {total1.getText(), total2.getText(), total3.getText(), total4.getText(), total5.getText()};
+        return totales;
+    }
+    
+    /**
+     * Método RMI para recoger los datos de los operandos de los cajeros
+     * @return 
+     */
+    public String[] getOperandos(){
+        String[] operandos = {operando1.getText(), operando2.getText(), operando3.getText(), operando4.getText()};
+        return operandos;
+    }
+    
+    public String[] getOperarios(){
+        String[] op = {operario1.getText(), operario2.getText()};
+        return op;
+    }
+    
+    public String[] getBotones(){
+        String[] botones = {pausarOp1.getText(), pausarOp2.getText(), pausar.getText()};
+        return botones;
+    }
+    
+    /**
+     * Método RMI para pausar el Operario 1
+     * @param evt
+     */
+    public void pausarOp1(java.awt.event.ActionEvent evt){
+        pausarOp1ActionPerformed(evt);
+    }
+    
+    /**
+     * Método RMI para pausar el Operario 2
+     * @param evt
+     */
+    public void pausarOp2(java.awt.event.ActionEvent evt){
+        pausarOp2ActionPerformed(evt);
+    }
+    
+    /**
+     * Método RMI para pausar el programa
+     * @param evt
+     */
+    public void pausar(java.awt.event.ActionEvent evt){
+        pausarActionPerformed(evt);
     }
 
     /**
@@ -289,7 +353,6 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
 
         pausar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         pausar.setText("Pausar");
-        pausar.setActionCommand("Pausar");
         pausar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pausarActionPerformed(evt);
@@ -671,8 +734,10 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
 
     /**
      * @param args the command line arguments
+     * @throws java.rmi.RemoteException
+     * @throws java.net.MalformedURLException
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws RemoteException, MalformedURLException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -695,11 +760,14 @@ public class ModuloVisualizacion extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ModuloVisualizacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new ModuloVisualizacion().setVisible(true);
-        });
+        
+        ModuloVisualizacion modulo = new ModuloVisualizacion();
+        modulo.setVisible(true);
+        modulo.setTitle("Servidor");
+        
+        InterfaceServidor interfaz = new InterfaceServidor(modulo);
+        Registry registry = LocateRegistry.createRegistry(1099); //rmiregistry en puerto 1099
+        Naming.rebind("//127.0.0.1/AccesoServidor", interfaz);   //funciona en equipo local
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
