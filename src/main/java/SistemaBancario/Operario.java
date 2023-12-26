@@ -69,7 +69,7 @@ public class Operario implements Runnable {
      * @throws InterruptedException Si la operación es interrumpida.
      * @throws IOException Si hay un error de entrada/salida al escribir en el archivo de log.
      */
-    public synchronized void retirar(int cantidad) throws InterruptedException, IOException {
+    private synchronized void retirar(int cantidad) throws InterruptedException, IOException {
         FileWriter fileWriter = new FileWriter("evolucionCajeros.txt", true); // El parámetro true indica que se añadirá al final del archivo
 
         // Obtener la fecha actual
@@ -100,7 +100,7 @@ public class Operario implements Runnable {
      * @throws InterruptedException Si la operación es interrumpida.
      * @throws IOException Si hay un error de entrada/salida al escribir en el archivo de log.
      */
-    public synchronized void depositar(int cantidad) throws InterruptedException, IOException {
+    private synchronized void depositar(int cantidad) throws InterruptedException, IOException {
         FileWriter fileWriter = new FileWriter("evolucionCajeros.txt", true); // El parámetro true indica que se añadirá al final del archivo
 
         // Obtener la fecha actual

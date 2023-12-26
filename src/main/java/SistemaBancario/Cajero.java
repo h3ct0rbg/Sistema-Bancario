@@ -99,7 +99,7 @@ public class Cajero implements Runnable {
      * 
      * @param cantidad Cantidad de dinero a insertar.
      */
-    public synchronized void insertar(int cantidad){
+    private synchronized void insertar(int cantidad){
         try{
             operando.setText(persona.getId()+"-I+"+persona.getDinero());
             movimientos.append(persona.getId()+"-I+"+persona.getDinero()+"\n");
@@ -138,7 +138,7 @@ public class Cajero implements Runnable {
      * 
      * @param cantidad Cantidad de dinero a extraer.
      */
-    public synchronized void extraer(int cantidad){
+    private synchronized void extraer(int cantidad){
         try{
             operando.setText(persona.getId()+"-E-"+persona.getDinero());
             movimientos.append(persona.getId()+"-E-"+persona.getDinero()+"\n");
